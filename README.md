@@ -10,25 +10,24 @@ Sogang Univ. 18 Fall Semester Assignment
 2. How to run file
     1. use makefile to make binary file
     2. the input form must be 
-    > ./[mms201XXXXX] [inputfile] [algorithm index]
-    example
-    ```bash
-    ./mms20171635 input00001.txt 1
-    ```
+        - example
+        ```bash
+        ./mms20171635 input00001.txt 1
+        ```
 
 3. Time Complexity of Index
     1. O(n^2)
     2. O(nlogn)
     3. O(n)
 
-4. Result File: result_[inputfilename].txt
-    1st line: input file name
-    2nd line: algorithm index
-    3rd line: input size (the number of elements in the original sequence)
-    4th line: index of the leftmost number in the subsequence found
-    5th line: index of the rightmost number in the subsequence found
-    6th line: sum of the subsequence
-    7th line: running time in milliseconds
+4. Result File: result_[inputfilename].txt <br>
+    1st line: input file name<br>
+    2nd line: algorithm index<br>
+    3rd line: input size (the number of elements in the original sequence)<br>
+    4th line: index of the leftmost number in the subsequence found<br>
+    5th line: index of the rightmost number in the subsequence found<br>
+    6th line: sum of the subsequence<br>
+    7th line: running time in milliseconds<br>
 
 -------------------------------------------
 ## Assignment 2: Master of Sorting
