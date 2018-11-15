@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
+#include <string.h>
 
 void DataInput();
 void DataOutput(double elapsed);
@@ -9,3 +11,8 @@ void BubbleSort();
 void MergeSort();
 void QuickSort();
 void CombinationSort();
+
+int *Data;
+char AlgoIndex;
+char *DataFile;
+int N;

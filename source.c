@@ -1,3 +1,5 @@
+#include "Algo2.h"
+
 void DataInput(){
     FILE *input;
     int idx;
@@ -26,18 +28,30 @@ void DataOutput(double elapsed){
     fprintf(output, "%d\n", N);           //3rd input size
     fprintf(output, "%lf\n", elapsed);    //7th running time in milliseconds
     
-    for(i = 0; i < N; i++)
+    for(i = 0; i < N; i++){
         fprintf(output, "%d ", Data[i]);
+    }
     //sorted elements
 
     fclose(output);
 }
 
+//time complexity of O(n^2)
 void BubbleSort(){
+    int i, j, temp;
 
+    for(i = 0; i < N; i++){
+        for(j = 0; j < N; j++){
+            if(Data[j] > Data[j + 1]){
+              temp = Data[j];
+              Data[j] = Data[j + 1];
+              Data[j + 1] = temp;
+            }
+        }
+    }
 
 }
-void MergeSort(){
+void HeapSort(){
 
 }
 void QuickSort(){

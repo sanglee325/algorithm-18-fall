@@ -9,6 +9,8 @@ int main(int argc, char *argv[]){
     DataFile = argv[1];
     AlgoIndex = argv[2][0];
 
+    DataInput();
+
     start = clock();
     switch (AlgoIndex) {
       case '1' : BubbleSort();

@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -g
 
-SOURCE = mp2_20171635.c source.c
+SOURCE = main.c source.c
 TARGET = mp2_20171635
 OBJ = $(SOURCE:.c=.o)
 
