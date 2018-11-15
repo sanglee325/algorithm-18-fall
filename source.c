@@ -1,5 +1,5 @@
 #include "Algo2.h"
-
+#define SWAP(a, b){int temp; temp = a; a = b; b = temp;}
 void DataInput(){
     FILE *input;
     int idx;
@@ -43,9 +43,7 @@ void BubbleSort(){
     for(i = 0; i < N; i++){
         for(j = 0; j < N; j++){
             if(Data[j] > Data[j + 1]){
-              temp = Data[j];
-              Data[j] = Data[j + 1];
-              Data[j + 1] = temp;
+                SWAP(Data[j], Data[j + 1]);
             }
         }
     }
