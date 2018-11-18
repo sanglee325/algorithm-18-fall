@@ -1,4 +1,4 @@
-#include "Algo2.h"
+#include "sort.h"
 #define SWAP(a, b){int temp; temp = a; a = b; b = temp;}
 
 void DataInput(){
@@ -38,15 +38,17 @@ void DataOutput(double elapsed){
 }
 
 //time complexity of O(n^2)
-void BubbleSort(){
+void InsertionSort(){
     int i, j, temp;
 
     for(i = 1; i < N; i++){
-        for(j = 1; j < N - 1; j++){
-            if(Data[j] > Data[j + 1]){
-                SWAP(Data[j], Data[j + 1]);
-            }
+        temp = Data[i];
+        j = i;
+        while((j > 0) && (temp < Data[j - 1])){
+            Data[j] = Data[j - 1];
+            j--;
         }
+        Data[j] = temp;
     }
 }
 
@@ -106,5 +108,6 @@ int partition(int left, int right){
     return pivot;
 }
 
-void CombinationSort(){
+void ImplementedQuickSort(){
+    
 }

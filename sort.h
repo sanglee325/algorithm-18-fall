@@ -7,10 +7,10 @@ void DataInput();
 void DataOutput(double elapsed);
 
 /*Sorting Algorithm Index Order 1 2 3 4*/
-void BubbleSort();
+void InsertionSort();
 void HeapSort(int n);
 void QuickSort(int left, int right);
-void CombinationSort();
+void ImplementedQuickSort();
 
 void adjust(int root, int n);
 int partition(int left, int right);

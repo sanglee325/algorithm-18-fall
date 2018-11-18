@@ -1,4 +1,4 @@
-#include "Algo2.h"
+#include "sort.h"
 
 int main(int argc, char *argv[]){
     int idx;
@@ -13,13 +13,13 @@ int main(int argc, char *argv[]){
 
     start = clock();
     switch (AlgoIndex) {
-      case '1' : BubbleSort();
+      case '1' : InsertionSort();
                  break;
       case '2' : HeapSort(N);
                  break;
       case '3' : QuickSort(0, N);
                  break;
-      case '4' : CombinationSort();
+      case '4' : ImplementedQuickSort();
                  break;
     }
     end = clock();
