@@ -12,6 +12,8 @@ void HeapSort();
 void QuickSort();
 void CombinationSort();
 
+void adjust(int root, int n);
+
 int *Data;
 char AlgoIndex;
 char *DataFile;
