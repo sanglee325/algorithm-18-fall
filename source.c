@@ -21,13 +21,17 @@ void DataOutput(double elapsed){
     int i;
     FILE *output;
 
+
+    strcat(result, AlgoIndex);
+    strcat(result,"_");
     strcat(result, DataFile);
+
     output = fopen(result, "w");
 
-    fprintf(output, "%s\n", DataFile);    //1st input file name
-    fprintf(output, "%c\n", AlgoIndex);   //2nd algorithm index
+//    fprintf(output, "%s\n", DataFile);    //1st input file name
+//    fprintf(output, "%c\n", AlgoIndex);   //2nd algorithm index
     fprintf(output, "%d\n", N);           //3rd input size
-    fprintf(output, "%lf\n", elapsed);    //7th running time in milliseconds
+ //   fprintf(output, "%lf\n", elapsed);    //7th running time in milliseconds
 
     for(i = 1; i < N + 1; i++){
         fprintf(output, "%d ", Data[i]);
@@ -38,17 +42,16 @@ void DataOutput(double elapsed){
 }
 
 //time complexity of O(n^2)
-void InsertionSort(){
+void InsertionSort(int a, int b){
     int i, j, temp;
 
-    for(i = 1; i < N; i++){
+    for(i = a; i <= b; i++){
         temp = Data[i];
         j = i;
-        while((j > 0) && (temp < Data[j - 1])){
-            Data[j] = Data[j - 1];
-            j--;
+        while((--j >= 0) && (temp < Data[j])){
+            Data[j+1] = Data[j];
+            Data[j] = temp;
         }
-        Data[j] = temp;
     }
 }
 
@@ -108,6 +111,32 @@ int partition(int left, int right){
     return pivot;
 }
 
-void ImplementedQuickSort(){
-    
+void threeSort(int front, int mid, int rear){
+    if(Data[front] > Data[mid]) SWAP(Data[front], Data[mid]);
+    if(Data[mid] > Data[rear]) SWAP(Data[mid], Data[rear]);
+    if(Data[front] > Data[mid]) SWAP(Data[front], Data[mid]);
+}
+void ImplementedQuickSort(int front, int rear){
+    int i, j, pivot;
+    int mid = front + (rear - front) / 2;
+
+    threeSort(front, mid, rear);
+
+    if(rear - front + 1 > 3){
+        pivot = Data[mid];
+        SWAP(Data[mid], Data[rear - 1]);
+        i = front;
+        j = rear - 1;
+
+        while(1){
+            while(Data[++i] < pivot && i < rear);
+            while(Data[--j] > pivot && front < j);
+            if(i >= j) break;
+            SWAP(Data[i], Data[j]);
+        }
+        SWAP(Data[i], Data[rear - 1]);
+        ImplementedQuickSort(front, i - 1);
+        ImplementedQuickSort(i + 1, rear);
+    }
+
 }

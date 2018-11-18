@@ -7,19 +7,19 @@ int main(int argc, char *argv[]){
     //DataFile = name of inputfile
     //Algoindex = Choosing algorithm to run
     DataFile = argv[1];
-    AlgoIndex = argv[2][0];
+    AlgoIndex = argv[2];
 
     DataInput();
 
     start = clock();
-    switch (AlgoIndex) {
-      case '1' : InsertionSort();
+    switch (AlgoIndex[0]) {
+      case '1' : InsertionSort(1, N);
                  break;
       case '2' : HeapSort(N);
                  break;
       case '3' : QuickSort(0, N);
                  break;
-      case '4' : ImplementedQuickSort();
+      case '4' : ImplementedQuickSort(1, N);
                  break;
     }
     end = clock();
