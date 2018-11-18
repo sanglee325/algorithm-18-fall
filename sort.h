@@ -10,7 +10,7 @@ void DataOutput(double elapsed);
 void InsertionSort(int a, int b);
 void HeapSort(int n);
 void QuickSort(int left, int right);
-void ImplementedQuickSort(int front, int rear);
+void MedianQuickSort(int front, int rear);
 
 void adjust(int root, int n);
 int partition(int left, int right);
