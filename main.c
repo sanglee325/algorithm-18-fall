@@ -17,7 +17,7 @@ int main(int argc, char *argv[]){
                  break;
       case '2' : HeapSort();
                  break;
-      case '3' : QuickSort();
+      case '3' : QuickSort(0, N);
                  break;
       case '4' : CombinationSort();
                  break;
@@ -25,7 +25,7 @@ int main(int argc, char *argv[]){
     end = clock();
   
     //create result file, free memory
-    DataOutput((double)(end-start)/CLOCKS_PER_SEC * 1000);
+    DataOutput((double)(end-start)/CLOCKS_PER_SEC);
     free(Data);
 
     return 0;
