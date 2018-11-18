@@ -19,7 +19,7 @@ int main(int argc, char *argv[]){
                  break;
       case '3' : QuickSort(0, N);
                  break;
-      case '4' : ImplementedQuickSort(1, N);
+      case '4' : MedianQuickSort(1, N);
                  break;
     }
     end = clock();
