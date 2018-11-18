@@ -8,7 +8,7 @@ void DataOutput(double elapsed);
 
 /*Sorting Algorithm Index Order 1 2 3 4*/
 void BubbleSort();
-void HeapSort();
+void HeapSort(int n);
 void QuickSort(int left, int right);
 void CombinationSort();
 

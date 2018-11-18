@@ -15,7 +15,7 @@ int main(int argc, char *argv[]){
     switch (AlgoIndex) {
       case '1' : BubbleSort();
                  break;
-      case '2' : HeapSort();
+      case '2' : HeapSort(N);
                  break;
       case '3' : QuickSort(0, N);
                  break;

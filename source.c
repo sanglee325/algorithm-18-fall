@@ -9,9 +9,9 @@ void DataInput(){
 
     //to save the memory, use malloc
     fscanf(input, "%d", &N);
-    Data = (int*)malloc(sizeof(int) * (N));
+    Data = (int*)malloc(sizeof(int) * (N + 1));
 
-    for(idx = 0; idx < N; idx++){
+    for(idx = 1; idx < N + 1; idx++){
         fscanf(input, "%d", &Data[idx]);
     }
     fclose(input);
@@ -24,12 +24,12 @@ void DataOutput(double elapsed){
     strcat(result, DataFile);
     output = fopen(result, "w");
 
-  //  fprintf(output, "%s\n", DataFile);    //1st input file name
+    fprintf(output, "%s\n", DataFile);    //1st input file name
     fprintf(output, "%c\n", AlgoIndex);   //2nd algorithm index
     fprintf(output, "%d\n", N);           //3rd input size
     fprintf(output, "%lf\n", elapsed);    //7th running time in milliseconds
 
-    for(i = 0; i < N; i++){
+    for(i = 1; i < N + 1; i++){
         fprintf(output, "%d ", Data[i]);
     }
     //sorted elements
@@ -41,8 +41,8 @@ void DataOutput(double elapsed){
 void BubbleSort(){
     int i, j, temp;
 
-    for(i = 0; i < N; i++){
-        for(j = 0; j < N; j++){
+    for(i = 1; i < N; i++){
+        for(j = 1; j < N - 1; j++){
             if(Data[j] > Data[j + 1]){
                 SWAP(Data[j], Data[j + 1]);
             }
@@ -50,17 +50,16 @@ void BubbleSort(){
     }
 }
 
-void HeapSort(){
+void HeapSort(int n){
     int i;
 
-    for(i = N/2; i > 0; i--)
-        adjust(i, N);
-    for(i = N - 1; i > 0; i--){
-        SWAP(Data[0], Data[i + 1]);
-        adjust(0, i);
+    for(i = n/2; i > 0; i--)
+        adjust(i, n);
+    for(i = n - 1; i > 0; i--){
+        SWAP(Data[1], Data[i + 1]);
+        adjust(1, i);
     }
 
-    SWAP(Data[0], Data[1]);
 }
 
 void adjust(int root, int n){
