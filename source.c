@@ -28,10 +28,10 @@ void DataOutput(double elapsed){
 
     output = fopen(result, "w");
 
-//    fprintf(output, "%s\n", DataFile);    //1st input file name
-//    fprintf(output, "%c\n", AlgoIndex);   //2nd algorithm index
+    fprintf(output, "%s\n", DataFile);    //1st input file name
+    fprintf(output, "%s\n", AlgoIndex);   //2nd algorithm index
     fprintf(output, "%d\n", N);           //3rd input size
- //   fprintf(output, "%lf\n", elapsed);    //7th running time in milliseconds
+    fprintf(output, "%lf\n", elapsed);    //7th running time in milliseconds
 
     for(i = 1; i < N + 1; i++){
         fprintf(output, "%d ", Data[i]);
@@ -116,7 +116,7 @@ void threeSort(int front, int mid, int rear){
     if(Data[mid] > Data[rear]) SWAP(Data[mid], Data[rear]);
     if(Data[front] > Data[mid]) SWAP(Data[front], Data[mid]);
 }
-void ImplementedQuickSort(int front, int rear){
+void MedianQuickSort(int front, int rear){
     int i, j, pivot;
     int mid = front + (rear - front) / 2;
 
@@ -135,8 +135,8 @@ void ImplementedQuickSort(int front, int rear){
             SWAP(Data[i], Data[j]);
         }
         SWAP(Data[i], Data[rear - 1]);
-        ImplementedQuickSort(front, i - 1);
-        ImplementedQuickSort(i + 1, rear);
+        MedianQuickSort(front, i - 1);
+        MedianQuickSort(i + 1, rear);
     }
 
 }
