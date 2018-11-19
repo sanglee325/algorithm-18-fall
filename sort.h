@@ -14,6 +14,7 @@ void MedianQuickSort(int front, int rear);
 
 void adjust(int root, int n);
 int partition(int left, int right);
+void Sort3(int front, int mid, int rear);
 
 int *Data;
 char *AlgoIndex;

@@ -4,8 +4,8 @@
 #include <stdlib.h>
 
 int main(){
-    int num, N = 50;
-    FILE *fp = fopen("file_1_50.txt", "w");
+    int num, N = 8000;
+    FILE *fp = fopen("file_8.txt", "w");
 
 
     fprintf(fp, "%d ", N);

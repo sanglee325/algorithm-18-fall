@@ -31,7 +31,7 @@ void DataOutput(double elapsed){
     fprintf(output, "%s\n", DataFile);    //1st input file name
     fprintf(output, "%s\n", AlgoIndex);   //2nd algorithm index
     fprintf(output, "%d\n", N);           //3rd input size
-    fprintf(output, "%lf\n", elapsed);    //7th running time in milliseconds
+    fprintf(output, "%lf\n", elapsed);    //4th running time in seconds
 
     for(i = 1; i < N + 1; i++){
         fprintf(output, "%d ", Data[i]);
@@ -83,6 +83,8 @@ void adjust(int root, int n){
     }
     Data[child / 2] = rootkey;
 }
+//Data starts from index 1, for easier heap sort
+//makes heap structure using adjust
 
 void QuickSort(int left, int right){
     int pivot;
@@ -110,17 +112,15 @@ int partition(int left, int right){
     SWAP(Data[right], Data[pivot]);
     return pivot;
 }
+//used in quick sort to choose pivot.
+//the pivot is the most left index.
+//returns the pivot value to main quick sort function
 
-void threeSort(int front, int mid, int rear){
-    if(Data[front] > Data[mid]) SWAP(Data[front], Data[mid]);
-    if(Data[mid] > Data[rear]) SWAP(Data[mid], Data[rear]);
-    if(Data[front] > Data[mid]) SWAP(Data[front], Data[mid]);
-}
 void MedianQuickSort(int front, int rear){
     int i, j, pivot;
     int mid = front + (rear - front) / 2;
 
-    threeSort(front, mid, rear);
+    Sort3(front, mid, rear);
 
     if(rear - front + 1 > 3){
         pivot = Data[mid];
@@ -140,3 +140,12 @@ void MedianQuickSort(int front, int rear){
     }
 
 }
+
+void Sort3(int front, int mid, int rear){
+    if(Data[front] > Data[mid]) SWAP(Data[front], Data[mid]);
+    if(Data[mid] > Data[rear]) SWAP(Data[mid], Data[rear]);
+    if(Data[front] > Data[mid]) SWAP(Data[front], Data[mid]);
+}
+//in case of three-median the front, mid, rear data is sorted
+//threeSort prevents the worst case of quick sort, pivor is mid index
+//ex) non increasing

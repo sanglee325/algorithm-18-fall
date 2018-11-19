@@ -15,9 +15,9 @@ int main(int argc, char *argv[]){
     switch (AlgoIndex[0]) {
       case '1' : InsertionSort(1, N);
                  break;
-      case '2' : HeapSort(N);
+      case '2' : QuickSort(0, N);
                  break;
-      case '3' : QuickSort(0, N);
+      case '3' : HeapSort(N);
                  break;
       case '4' : MedianQuickSort(1, N);
                  break;
