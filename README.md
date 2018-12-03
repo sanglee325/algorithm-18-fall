@@ -35,4 +35,23 @@ Sogang Univ. 18 Fall Semester Assignment
 1. Goal
     + Understand performance of different sorting algorithms.
 
-2. To be continued.......
+2. How to run file
+    1. use makefile to make binary file
+    2. the input form must be
+        - example
+        ```bash
+        ./mms20171635 input00001.txt 1
+        ```
+3. Algorithms used in assignment
+    1. Insertion sort: O(n^2)
+    2. Heap sort: O(nlogn)
+    3. Quick sort: O(nlogn) || O(n^2)
+    4. Median of Three Quick sort: O(nlogn)
+
+4. Result File: result_[index]_[inputfilename].txt <br>
+    1st line: input file name<br>
+    2nd line: algorithm index<br>
+    3rd line: input size (the number of elements)<br>
+    4th line: running time in second<br>
+    5th line: list of sorted data<br>
+
