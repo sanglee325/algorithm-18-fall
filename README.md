@@ -55,3 +55,10 @@ Sogang Univ. 18 Fall Semester Assignment
     4th line: running time in second<br>
     5th line: list of sorted data<br>
 
+-------------------------------------------
+## Assignment 3: Master of Compression
+
+1. Goal
+    + Design and implement a Huffman Coding-based file compression utility program.
+
+2. Will be added after submit...
