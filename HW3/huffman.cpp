@@ -1,5 +1,7 @@
 #include "Huffman.h"
 
+char *Option, *Filename;
+
 int main(int argc, char *argv[]){
     int idx;
     clock_t start, end;
@@ -10,7 +12,7 @@ int main(int argc, char *argv[]){
     Filename = argv[2];
 
     if(!strcmp(Option, "-c")) Compress();
-    else if(!strcmp(Option, "-d") Decompress();
+    else if(!strcmp(Option, "-d")) Decompress();
 
     return 0;
 }

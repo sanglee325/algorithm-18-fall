@@ -1,7 +1,7 @@
 CC = g++
 CFLAGS = -g
 
-SOURCE = huffman.cpp
+SOURCE = huffman.cpp source.cpp
 TARGET = mp3_20171635
 OBJ = $(SOURCE:.cpp=.o)
 

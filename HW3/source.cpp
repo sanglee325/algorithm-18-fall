@@ -1,5 +1,7 @@
 #include "Huffman.h"
 
+extern char *Option, *Filename;
+
 typedef struct _info{
     int num;
     char symbol;
@@ -14,7 +16,8 @@ void Compress(){
     int i, j;
     char tmp;
     bool newS;
-    INFO *check
+    INFO *check;
+
     input = fopen(Filename, "r");
 
     while(1){
@@ -22,8 +25,8 @@ void Compress(){
         length++;
         if(tmp == EOF) break;
 
-        if(Info == NULL){
-            Data = malloc(sizeof(INFO));
+        if(Data == NULL){
+            Data = (INFO*)malloc(sizeof(INFO));
             Data[0].symbol = tmp;
             Data[0].num = 1;
             type++;
@@ -41,7 +44,7 @@ void Compress(){
             if(newS){
                 type++;
                 check = Data;
-                Data = realloc(Data, sizeof(INFO)*type);
+                Data = (INFO*)realloc(Data, sizeof(INFO)*type);
                 if(Data == 0){
                     Data = check;
                     printf("REALLOC ERROR\n");
@@ -57,4 +60,6 @@ void Compress(){
     //need to make a trreeeeeeeeeee
 }
 
+void Decompress(){
+}
 

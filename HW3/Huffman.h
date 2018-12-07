@@ -2,8 +2,6 @@
 #include <cstring>
 #include <cstdlib>
 
-char *Option;
-char *Filename;
 
 typedef struct _node{
     char symbol;
@@ -12,7 +10,7 @@ typedef struct _node{
     struct _node *right;
 } NODE;
 
-NODE *u, *v, *w;
+//NODE *u, *v, *w;
 
 void Compress();
 void Decompress();
