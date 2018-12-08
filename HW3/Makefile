@@ -1,11 +1,11 @@
-CC = g++
+CC = gcc
 CFLAGS = -g
 
-SOURCE = huffman.cpp source.cpp
+SOURCE = huffman.c
 TARGET = mp3_20171635
-OBJ = $(SOURCE:.cpp=.o)
+OBJ = $(SOURCE:.c=.o)
 
-$(TARGET) : $(OBJ) Huffman.h
+$(TARGET) : $(OBJ) 
 		$(CC) $(CFLAGS) -o $(TARGET) $(OBJ)
 
 debug : $(TARGET)
