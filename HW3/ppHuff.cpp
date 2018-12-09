@@ -12,13 +12,18 @@ typedef struct _node{
     char data;
     unsigned int b;
     bool leaf;
+    int max, child;
     struct _node* left;
     struct _node* right;
 }NODE;
 
 bool operator<(NODE a, NODE b){
-    return a.freq < b.freq;
-}
+    if(a.freq == b.freq){
+        return a.child < b.child;
+    }
+    else
+        return a.freq > b.freq;
+}//작은 값이 top으로 오도록
 NODE *Data;
 NODE *head;
 
@@ -64,8 +69,9 @@ void Compress(){
         if(Data == NULL){
             Data = (NODE*)malloc(sizeof(NODE));
             Data[0].data = tmp;
-            Data[0].freq = 1;
+            Data[0].freq = Data[0].max = 1;
             Data[0].leaf = true;
+            Data[0].child = 1;
             type++;
         }
         else{
@@ -73,6 +79,7 @@ void Compress(){
                 if(Data[i].data == tmp){
                     newS = false;
                     Data[i].freq++;
+                    Data[i].max++;
                     break;
                 }
                 else newS = true;
@@ -88,8 +95,9 @@ void Compress(){
                 } // memory error check
                 else{
                     Data[type - 1].data = tmp;
-                    Data[type - 1].freq = 1;
+                    Data[type - 1].freq = Data[type - 1].max = 1;
                     Data[type - 1].leaf = true;
+                    Data[type - 1].child = 1;
                 }
             }
         }
@@ -124,28 +132,45 @@ void createHeap(){
         tmp1->data = heap.top().data;
         tmp1->left = heap.top().left; tmp1->right = heap.top().right;
         tmp1->leaf = heap.top().leaf;
-        tmp1->b = 1;
+        tmp1->max = heap.top().max;
+        tmp1->child = heap.top().child;
+        tmp1->b = 0;
         heap.pop();
 
         tmp2->freq = heap.top().freq;
         tmp2->data = heap.top().data;
         tmp2->left = heap.top().left; tmp2->right = heap.top().right;
         tmp2->leaf = heap.top().leaf;
-        tmp2->b = 1;
+        tmp2->max = heap.top().max;
+        tmp2->child = heap.top().child;
+        tmp2->b = 0;
         heap.pop();
 
         newNode = (NODE*)malloc(sizeof(NODE));
         newNode->freq = tmp1->freq + tmp2->freq;
-        newNode->b = 1;
+        newNode->b = 0;
+        newNode->max = tmp1->max < tmp2->max ? tmp2->max : tmp1->max; 
+        newNode->child = tmp1->child + tmp2->child;
         newNode->leaf = false;
-
-        if(tmp1->freq >= tmp2->freq){
+        
+        if(tmp1->freq < tmp2->freq){
             newNode->left = tmp1;
             newNode->right = tmp2;
         }
-        else{
+        else if(tmp1->freq > tmp2->freq){
             newNode->right = tmp1;
             newNode->left = tmp2;
+        }
+
+        else if(tmp1->freq == tmp2->freq){
+            if(tmp1->max > tmp2->max){
+                newNode->left = tmp1;
+                newNode->right = tmp2;
+            }
+            else{ 
+                newNode->left = tmp2;
+                newNode->right = tmp1;
+            }
         }
 
         if(heap.empty()) break;
@@ -170,22 +195,16 @@ void encode(){
 
     idx = 0;
     postOrder(tmp, parent, target);
-
     for(int i = 0; i < type; i++){
-        printf("Data[%d]\ndata: %c, freq: %d\n", i, Data[i].data, Data[i].freq);
-        printf("bit: ");
-//        printf("%d\n", Data[i].b);
-        for(int j = 32; j >= 0; --j){ 
+        //printf("Data[%d]\ndata: %c, freq: %d\n", i, Data[i].data, Data[i].freq);
+        //printf("bit: ");
+       // printf("%d\n", Data[i].b);
+        for(int j = 31; j >= 0; --j){ 
           printf("%d", (Data[i].b >> j)&1);
+          if(j % 4 == 0) printf(" ");
         }
         printf("\n");
     }
-
-}
-
-void searchLeaf(NODE *root, NODE *parent){
-
-
 }
 
 void postOrder(NODE *node, NODE *parent, NODE *target){
