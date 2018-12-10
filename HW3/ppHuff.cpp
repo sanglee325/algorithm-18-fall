@@ -2,7 +2,6 @@
 #include <cstring>
 #include <cstdlib>
 #include <queue>
-#define SWAP(a, b){int temp; temp = a; a = b; b = temp;}
 
 using namespace std;
 
@@ -105,29 +104,25 @@ void Compress(){
         }
     }//symbol and its number saved
     
-    for(i = 0; i < type; i++){
+    for(i = 0; i < type; i++)
         heap.push(Data[i]);
-    }
 
     createHeap();
     free(Data);
     encode();
 
-    createZipFile();/*
-    for(i = 0; i < type; i++){
-      printf("Data[%d]: %c, freq: %d, len: %d\n", i, Data[i].data, Data[i].freq, Data[i].len);
-        //printf("Data[%d]\ndata: %c, freq: %d\n", i, Data[i].data, Data[i].freq);
-        //printf("bit: ");
-       // printf("%d\n", Data[i].b);
-        for(int j = 31; j >= 0; --j){ 
-          printf("%d", (Data[i].b >> j)&1);
-          if(j % 4 == 0) printf(" ");
-        }
-        printf("\n");
-    }*/
-    //need to make a trreeeeeeeeeee
+    createZipFile();
 }
 
+void copyNode(NODE *tmp, NODE heap){
+    tmp->freq = heap.freq;
+    tmp->data = heap.data;
+    tmp->left = heap.left; tmp->right = heap.right;
+    tmp->leaf = heap.leaf;
+    tmp->max = heap.max;
+    tmp->child = heap.child;
+    tmp->b = 0;
+}
 void createHeap(){
     int i, j;
     NODE *tmp1, *tmp2;
@@ -138,22 +133,9 @@ void createHeap(){
         tmp1 = (NODE*)malloc(sizeof(NODE));
         tmp2 = (NODE*)malloc(sizeof(NODE));
 
-        tmp1->freq = heap.top().freq;
-        tmp1->data = heap.top().data;
-        tmp1->left = heap.top().left; tmp1->right = heap.top().right;
-        tmp1->leaf = heap.top().leaf;
-        tmp1->max = heap.top().max;
-        tmp1->child = heap.top().child;
-        tmp1->b = 0;
+        copyNode(tmp1, heap.top());
         heap.pop();
-
-        tmp2->freq = heap.top().freq;
-        tmp2->data = heap.top().data;
-        tmp2->left = heap.top().left; tmp2->right = heap.top().right;
-        tmp2->leaf = heap.top().leaf;
-        tmp2->max = heap.top().max;
-        tmp2->child = heap.top().child;
-        tmp2->b = 0;
+        copyNode(tmp2, heap.top());
         heap.pop();
 
         newNode = (NODE*)malloc(sizeof(NODE));
@@ -207,16 +189,6 @@ void encode(){
 
     idx = 0;
     postOrder(tmp, parent, target);
- /*   for(int i = 0; i < type; i++){
-        printf("Data[%d]\ndata: %c, freq: %d\n", i, Data[i].data, Data[i].freq);
-        printf("bit: ");
-        printf("%d\n", Data[i].b);
-        for(int j = 31; j >= 0; --j){ 
-          printf("%d", (Data[i].b >> j)&1);
-          if(j % 4 == 0) printf(" ");
-        }
-        printf("\n");
-    }*/
 }
 
 void postOrder(NODE *node, NODE *parent, NODE *target){
@@ -247,12 +219,11 @@ void postOrder(NODE *node, NODE *parent, NODE *target){
 }
 void createZipFile(){
     FILE *in, *out;
-    int idx, end, len, prevLen, sum;
-    int i, j, leftOver;
+    int idx, end, len, prevLen;
+    int i, leftOver;
     double total = 0, count = 0;
     char c;
     unsigned int buf, temp, prevBuf;
-    int buf_idx = 0;
     bool full = false;
 
     in = fopen(Filename, "r");
@@ -313,56 +284,6 @@ void createZipFile(){
         if(end == EOF) break;
         if(count == total) break;
     }
-        /*
-        for(idx = 0; idx < type; idx++){
-            if(Data[idx].data == c){
-                OFbuf = temp = Data[idx].b; 
-                break;
-            }
-        }
-        len[buf_idx] += Data[idx].len;
-        count += Data[idx].len;
-        if(len[buf_idx] > 32){
-            temp >>= len[buf_idx] - 32;
-            buf[buf_idx] |= temp;
-            if(buf_idx == 0){
-                len[1] = len[0] - 32;
-                OFbuf <<= 32 - len[1];
-                buf[1] |= OFbuf;
-            }
-            if(buf_idx == 1){
-                len[0] = len[1] - 32;
-                OFbuf <<= 32 - len[0];
-                buf[0] |= OFbuf;
-            }
-            full = true;
-        }
-        else if(len[buf_idx] == 32){
-            full = true;
-        }
-        else{
-            temp <<= 32 - len[buf_idx];
-            buf[buf_idx] |= temp;
-        }
-        if(full == true || count == total){
-            for(int j = 31; j >= 0; --j){ 
-                printf("%d", (buf[buf_idx] >> j)&1);
-                if(j % 4 == 0) printf(" ");
-            }
-            printf("\n");
-            fwrite(&buf[buf_idx], sizeof(unsigned int), 1, out);
-            buf[buf_idx] = 0;
-            len[buf_idx] = 0;
-            if(buf_idx == 1){
-                buf_idx = 0;
-            }
-            if(buf_idx == 0){
-                buf_idx = 1;
-            }
-            full = false;
-        }
-        OFbuf = temp = 0;
-    }*/
             
     fclose(in);
     fclose(out);
@@ -411,7 +332,7 @@ void createDTree(){
 }
 
 void Decompress(){
-    FILE *cc, *dd;
+    FILE *in, *out;
     char c;
     int len;
     double total;
@@ -421,27 +342,27 @@ void Decompress(){
     bool pFlag = false;
     NODE *root, *target;
 
-    cc = fopen(Filename, "rb");
+    in = fopen(Filename, "rb");
     strcat(Filename, ".yy");
-    dd = fopen(Filename, "w");
-    fread(&total, sizeof(double), 1, cc);
-    fread(&type, sizeof(int), 1, cc);
+    out = fopen(Filename, "w");
+    fread(&total, sizeof(double), 1, in);
+    fread(&type, sizeof(int), 1, in);
 
     Data = (NODE*)malloc(sizeof(NODE) * type);
 
     for(i = 0; i < type; i++){
-        fread(&c, sizeof(char), 1, cc);
+        fread(&c, sizeof(char), 1, in);
         Data[i].data = c;
-        fread(&len, sizeof(int), 1, cc);
+        fread(&len, sizeof(int), 1, in);
         Data[i].len = len;
-        fread(&temp, sizeof(unsigned int), 1, cc);
+        fread(&temp, sizeof(unsigned int), 1, in);
         Data[i].b = temp;
     }
     createDTree();
 
     target = head;
     while(1){
-        fread(&temp, sizeof(unsigned int), 1, cc);
+        fread(&temp, sizeof(unsigned int), 1, in);
         buf_idx = 31;
         while(buf_idx >= 0){
             buf = temp;
@@ -451,7 +372,7 @@ void Decompress(){
             if(buf == 1)
                 target = target->right;
             if(target->left == NULL && target->right == NULL){
-                fprintf(dd, "%c", target->data);
+                fprintf(out, "%c", target->data);
                 target = head;
             }
             buf_idx--;
@@ -461,50 +382,6 @@ void Decompress(){
         if(count == total) break;
     }
 
-
-
-
-
-    
-    /*
-    for(i = 0; i < 2; i++){
-        buf[i] = 0;
-        len[i] = 32;
-    }
-    while(1){
-        if(len[buf_idx] == 0){
-            fread(&temp, sizeof(unsigned int), 1, cc);
-            buf[buf_idx] = temp;
-        }
-        for(j = 0; j < 32; j++){
-            for(i = 0; i < type; i++){
-                if(Data[i].b == buf[buf_idx] && Data[i].len == len[buf_idx]){
-                    fprintf(dd, "%c", Data[i].data);
-                    count += len[buf_idx];
-                    if(count == total) break;
-                    pFlag = true;
-                    break;
-                }
-            }
-            if(count == total) break;
-            if(pFlag == true){
-                buf[buf_idx] = temp;
-                buf[buf_idx] <<= j;
-                buf[buf_idx] >>= j;
-                numShift = j;
-                pFlag = false;
-            }
-            else if(pFlag == false && j != 31){
-                buf[buf_idx] >>= 1;
-                len[buf_idx] -= 1;
-            }
-        }
-        if(count == total) break;
-        if(pFlag == false && j == 31){
-
-
-        }
-    }*/
     free(Data);
 }
 
