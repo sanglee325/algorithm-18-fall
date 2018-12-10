@@ -36,6 +36,7 @@ void postOrder(NODE *node, NODE *parent, NODE *target);
 void createZipFile();
 
 void Decompress();
+void createDTree();
 int type;
 int idx;
 
@@ -112,7 +113,7 @@ void Compress(){
     free(Data);
     encode();
 
-    createZipFile();
+    createZipFile();/*
     for(i = 0; i < type; i++){
       printf("Data[%d]: %c, freq: %d, len: %d\n", i, Data[i].data, Data[i].freq, Data[i].len);
         //printf("Data[%d]\ndata: %c, freq: %d\n", i, Data[i].data, Data[i].freq);
@@ -123,7 +124,7 @@ void Compress(){
           if(j % 4 == 0) printf(" ");
         }
         printf("\n");
-    }
+    }*/
     //need to make a trreeeeeeeeeee
 }
 
@@ -206,10 +207,10 @@ void encode(){
 
     idx = 0;
     postOrder(tmp, parent, target);
-/*    for(int i = 0; i < type; i++){
-        //printf("Data[%d]\ndata: %c, freq: %d\n", i, Data[i].data, Data[i].freq);
-        //printf("bit: ");
-       // printf("%d\n", Data[i].b);
+ /*   for(int i = 0; i < type; i++){
+        printf("Data[%d]\ndata: %c, freq: %d\n", i, Data[i].data, Data[i].freq);
+        printf("bit: ");
+        printf("%d\n", Data[i].b);
         for(int j = 31; j >= 0; --j){ 
           printf("%d", (Data[i].b >> j)&1);
           if(j % 4 == 0) printf(" ");
@@ -246,22 +247,70 @@ void postOrder(NODE *node, NODE *parent, NODE *target){
 }
 void createZipFile(){
     FILE *in, *out;
-    int idx, end, len[2], sum;
+    int idx, end, len, prevLen, sum;
+    int i, j, leftOver;
+    double total = 0, count = 0;
     char c;
-    unsigned int buf[2], temp, OFbuf = 0;
+    unsigned int buf, temp, prevBuf;
     int buf_idx = 0;
     bool full = false;
 
-    for(int i = 0; i < 2; i++){
-        buf[i] = 0;
-        len[i] = 0;
-    }
     in = fopen(Filename, "r");
-    strcat(Filename, ".cc");
+    strcat(Filename, ".zz");
     out = fopen(Filename, "wb");
+
+    for(idx = 0; idx < type; idx++)
+        total += Data[idx].len * Data[idx].freq;
+
+    fwrite(&total, sizeof(double), 1, out);
+    fwrite(&type, sizeof(int), 1, out);
+    for(int i = 0; i < type; i++){
+        fwrite(&Data[i].data, sizeof(char), 1, out);
+        fwrite(&Data[i].len, sizeof(int), 1, out);
+        fwrite(&Data[i].b, sizeof(unsigned int), 1, out);
+    }
+
+    leftOver = 0;
+    prevBuf = 0;
     while(1){
-        end = fscanf(in, "%c", &c);
+        len += leftOver;
+        buf = 0;
+        buf |= prevBuf;
+        while(1){
+            end = fscanf(in, "%c", &c);
+            if(end == EOF) break;
+            for(i = 0; i < type; i++){
+                if(Data[i].data == c){ 
+                    len += Data[i].len;
+                    count += Data[i].len;
+                    temp = Data[i].b;
+                    break;
+                }
+            }
+            if(len > 32){
+                leftOver = len - 32;
+                temp >>= leftOver;
+                prevBuf = Data[idx].b;
+                prevBuf <<= 32 - leftOver;
+            }
+            if(len == 32){
+                prevBuf = 0;
+                leftOver = 0;
+            }
+            else    
+                temp <<= 32 - len;
+            buf |= temp;
+            if(count == total) break;
+            if(len >= 32){
+                len = 0;
+                break;
+            }
+        }
+        fwrite(&buf, sizeof(unsigned int), 1, out);
         if(end == EOF) break;
+        if(count == total) break;
+    }
+        /*
         for(idx = 0; idx < type; idx++){
             if(Data[idx].data == c){
                 OFbuf = temp = Data[idx].b; 
@@ -269,6 +318,7 @@ void createZipFile(){
             }
         }
         len[buf_idx] += Data[idx].len;
+        count += Data[idx].len;
         if(len[buf_idx] > 32){
             temp >>= len[buf_idx] - 32;
             buf[buf_idx] |= temp;
@@ -284,11 +334,19 @@ void createZipFile(){
             }
             full = true;
         }
+        else if(len[buf_idx] == 32){
+            full = true;
+        }
         else{
             temp <<= 32 - len[buf_idx];
             buf[buf_idx] |= temp;
         }
-        if(full == true){
+        if(full == true || count == total){
+            for(int j = 31; j >= 0; --j){ 
+                printf("%d", (buf[buf_idx] >> j)&1);
+                if(j % 4 == 0) printf(" ");
+            }
+            printf("\n");
             fwrite(&buf[buf_idx], sizeof(unsigned int), 1, out);
             buf[buf_idx] = 0;
             len[buf_idx] = 0;
@@ -301,13 +359,150 @@ void createZipFile(){
             full = false;
         }
         OFbuf = temp = 0;
-    }
+    }*/
             
     fclose(in);
     fclose(out);
 
 }
 
-void Decompress(){
+void createDTree(){
+    int i, idxShift;
+    unsigned int x, buf;
+    NODE *newN, *temp, *prev;
+    
+    newN = (NODE*)malloc(sizeof(NODE));
+    newN->left = newN->right = NULL;
+    head = newN;
+
+    for(i = 0; i < type; i++){
+        temp = head;
+        idxShift = Data[i].len - 1;
+        x = Data[i].b;
+
+        while(idxShift >= 0){
+            buf = Data[i].b;
+            x = (buf >> idxShift) & (~(~0 << 1));
+            if(x == 0){
+                if(temp->left == NULL){
+                    newN = (NODE*)malloc(sizeof(NODE));
+                    newN->left = newN->right = NULL;
+                    temp->left = newN;
+                }
+                temp = temp->left;
+            }
+            if(x == 1){
+                if(temp->right == NULL){
+                    newN = (NODE*)malloc(sizeof(NODE));
+                    newN->left = newN->right = NULL;
+                    temp->right = newN;
+                }
+                temp = temp->right;
+            }
+            idxShift--;
+        }
+        temp->data = Data[i].data;
+        temp->len = Data[i].len;
+        temp->b = Data[i].b;
+    }
 }
+
+void Decompress(){
+    FILE *cc, *dd;
+    char c;
+    int len;
+    double total;
+    double count = 0;
+    unsigned int buf, temp;
+    int buf_idx = 0, idxShift = 0, i, j;
+    bool pFlag = false;
+    NODE *root, *target;
+
+    cc = fopen(Filename, "rb");
+    strcat(Filename, ".yy");
+    dd = fopen(Filename, "w");
+    fread(&total, sizeof(double), 1, cc);
+    fread(&type, sizeof(int), 1, cc);
+
+    Data = (NODE*)malloc(sizeof(NODE) * type);
+
+    for(i = 0; i < type; i++){
+        fread(&c, sizeof(char), 1, cc);
+        Data[i].data = c;
+        fread(&len, sizeof(int), 1, cc);
+        Data[i].len = len;
+        fread(&temp, sizeof(unsigned int), 1, cc);
+        Data[i].b = temp;
+    }
+    createDTree();
+
+    target = head;
+    while(1){
+        fread(&temp, sizeof(unsigned int), 1, cc);
+        buf_idx = 31;
+        while(buf_idx >= 0){
+            buf = temp;
+            buf = (buf >> buf_idx) & (~(~0 << 1));
+            if(buf == 0)
+                target = target->left;
+            if(buf == 1)
+                target = target->right;
+            if(target->left == NULL && target->right == NULL){
+                fprintf(dd, "%c", target->data);
+                target = head;
+            }
+            buf_idx--;
+            count++;
+            if(count == total) break;
+        }
+        if(count == total) break;
+    }
+
+
+
+
+
+    
+    /*
+    for(i = 0; i < 2; i++){
+        buf[i] = 0;
+        len[i] = 32;
+    }
+    while(1){
+        if(len[buf_idx] == 0){
+            fread(&temp, sizeof(unsigned int), 1, cc);
+            buf[buf_idx] = temp;
+        }
+        for(j = 0; j < 32; j++){
+            for(i = 0; i < type; i++){
+                if(Data[i].b == buf[buf_idx] && Data[i].len == len[buf_idx]){
+                    fprintf(dd, "%c", Data[i].data);
+                    count += len[buf_idx];
+                    if(count == total) break;
+                    pFlag = true;
+                    break;
+                }
+            }
+            if(count == total) break;
+            if(pFlag == true){
+                buf[buf_idx] = temp;
+                buf[buf_idx] <<= j;
+                buf[buf_idx] >>= j;
+                numShift = j;
+                pFlag = false;
+            }
+            else if(pFlag == false && j != 31){
+                buf[buf_idx] >>= 1;
+                len[buf_idx] -= 1;
+            }
+        }
+        if(count == total) break;
+        if(pFlag == false && j == 31){
+
+
+        }
+    }*/
+    free(Data);
+}
+
 
