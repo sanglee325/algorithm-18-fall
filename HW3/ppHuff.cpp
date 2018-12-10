@@ -270,10 +270,10 @@ void createZipFile(){
         fwrite(&Data[i].b, sizeof(unsigned int), 1, out);
     }
 
+    len = 0;
     leftOver = 0;
     prevBuf = 0;
     while(1){
-        len += leftOver;
         buf = 0;
         buf |= prevBuf;
         while(1){
@@ -290,21 +290,24 @@ void createZipFile(){
             if(len > 32){
                 leftOver = len - 32;
                 temp >>= leftOver;
-                prevBuf = Data[idx].b;
+                buf |= temp;
+                prevBuf = Data[i].b;
                 prevBuf <<= 32 - leftOver;
+                len = leftOver;
+                break;
             }
             if(len == 32){
                 prevBuf = 0;
                 leftOver = 0;
-            }
-            else    
-                temp <<= 32 - len;
-            buf |= temp;
-            if(count == total) break;
-            if(len >= 32){
                 len = 0;
+                buf |= temp;
                 break;
             }
+            else{   
+                temp <<= 32 - len;
+                buf |= temp;
+            }
+            if(count == total) break;
         }
         fwrite(&buf, sizeof(unsigned int), 1, out);
         if(end == EOF) break;
