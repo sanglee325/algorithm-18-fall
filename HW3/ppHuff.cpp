@@ -33,15 +33,17 @@ void createHeap();
 void encode();
 void postOrder(NODE *node, NODE *parent, NODE *target);
 void createZipFile();
+void copyNode(NODE *tmp, NODE heap);
+//functions used to compress
 
 void Decompress();
 void createDTree();
+//fuctions used to decompress
+
 int type;
 int idx;
 
 int main(int argc, char *argv[]){
-    int idx;
-
     //Filename = name of inputfile
     //Option = choose to compress or decompress
     Option = argv[1];
@@ -49,9 +51,11 @@ int main(int argc, char *argv[]){
 
     if(!strcmp(Option, "-c")) Compress();
     else if(!strcmp(Option, "-d")) Decompress();
-
+    else printf("Option Error\n");  //error
+    
     return 0;
 }
+
 void Compress(){
     FILE *input;
     int length = 0, idx;
@@ -62,6 +66,10 @@ void Compress(){
 
     input = fopen(Filename, "r");
 
+    if(input == NULL){
+        printf("INPUT FILE OPEN ERROR\n");
+        return ;
+    }//file open error
     while(1){
         end = fscanf(input, "%c", &tmp);
         length++;
@@ -85,7 +93,6 @@ void Compress(){
                 }
                 else newS = true;
             }
-
             if(newS){
                 type++;
                 check = Data;
@@ -102,7 +109,7 @@ void Compress(){
                 }
             }
         }
-    }//symbol and its number saved
+    }//symbol and its frequency saved
     
     for(i = 0; i < type; i++)
         heap.push(Data[i]);
@@ -110,7 +117,6 @@ void Compress(){
     createHeap();
     free(Data);
     encode();
-
     createZipFile();
 }
 
@@ -155,7 +161,6 @@ void createHeap(){
             newNode->right = tmp1;
             newNode->left = tmp2;
         }
-
         else if(tmp1->freq == tmp2->freq){
             if(tmp1->max > tmp2->max){
                 newNode->left = tmp1;
@@ -166,11 +171,9 @@ void createHeap(){
                 newNode->right = tmp1;
             }
         }
-
         if(heap.empty()) break;
-        heap.push(*newNode);
+        heap.push(*newNode); //push new node to priority queue
     }
-
     head = newNode; 
 }
 
@@ -217,6 +220,7 @@ void postOrder(NODE *node, NODE *parent, NODE *target){
         idx++;
     }
 }
+
 void createZipFile(){
     FILE *in, *out;
     int idx, end, len, prevLen;
@@ -240,10 +244,9 @@ void createZipFile(){
         fwrite(&Data[i].len, sizeof(int), 1, out);
         fwrite(&Data[i].b, sizeof(unsigned int), 1, out);
     }
+    //write data of code (header)
 
-    len = 0;
-    leftOver = 0;
-    prevBuf = 0;
+    len = 0;  leftOver = 0; prevBuf = 0; //initialize
     while(1){
         buf = 0;
         buf |= prevBuf;
@@ -283,11 +286,10 @@ void createZipFile(){
         fwrite(&buf, sizeof(unsigned int), 1, out);
         if(end == EOF) break;
         if(count == total) break;
-    }
+    }//make compressed file
             
     fclose(in);
     fclose(out);
-
 }
 
 void createDTree(){
@@ -328,21 +330,24 @@ void createDTree(){
         temp->data = Data[i].data;
         temp->len = Data[i].len;
         temp->b = Data[i].b;
-    }
+    }//create tree
 }
 
 void Decompress(){
     FILE *in, *out;
     char c;
     int len;
-    double total;
-    double count = 0;
+    double total, count = 0;
     unsigned int buf, temp;
     int buf_idx = 0, idxShift = 0, i, j;
     bool pFlag = false;
     NODE *root, *target;
 
     in = fopen(Filename, "rb");
+    if(in == NULL){
+        printf("INPUT FILE OPEN ERROR\n");
+        return ;
+    }
     strcat(Filename, ".yy");
     out = fopen(Filename, "w");
     fread(&total, sizeof(double), 1, in);
@@ -358,7 +363,7 @@ void Decompress(){
         fread(&temp, sizeof(unsigned int), 1, in);
         Data[i].b = temp;
     }
-    createDTree();
+    createDTree();//make huffman code tree
 
     target = head;
     while(1){
@@ -380,9 +385,9 @@ void Decompress(){
             if(count == total) break;
         }
         if(count == total) break;
-    }
+    }//decode the compressed file by bit
 
+    fclose(in);
+    fclose(out);
     free(Data);
 }
-
-
