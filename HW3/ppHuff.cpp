@@ -27,7 +27,7 @@ NODE *Data;
 NODE *head;
 
 priority_queue<NODE> heap;
-
+//operator에 정보를 추가하여 내장된 헤더를 이용한다
 void Compress();
 void createHeap();
 void encode();
@@ -110,7 +110,8 @@ void Compress(){
             }
         }
     }//symbol and its frequency saved
-    
+   
+    fclose(input);
     for(i = 0; i < type; i++)
         heap.push(Data[i]);
 
@@ -225,7 +226,7 @@ void createZipFile(){
     FILE *in, *out;
     int idx, end, len, prevLen;
     int i, leftOver;
-    double total = 0, count = 0;
+    unsigned int total = 0, count = 0;
     char c;
     unsigned int buf, temp, prevBuf;
     bool full = false;
@@ -237,7 +238,7 @@ void createZipFile(){
     for(idx = 0; idx < type; idx++)
         total += Data[idx].len * Data[idx].freq;
 
-    fwrite(&total, sizeof(double), 1, out);
+    fwrite(&total, sizeof(unsigned int), 1, out);
     fwrite(&type, sizeof(int), 1, out);
     for(int i = 0; i < type; i++){
         fwrite(&Data[i].data, sizeof(char), 1, out);
@@ -337,7 +338,7 @@ void Decompress(){
     FILE *in, *out;
     char c;
     int len;
-    double total, count = 0;
+    unsigned int total, count = 0;
     unsigned int buf, temp;
     int buf_idx = 0, idxShift = 0, i, j;
     bool pFlag = false;
@@ -350,7 +351,7 @@ void Decompress(){
     }
     strcat(Filename, ".yy");
     out = fopen(Filename, "w");
-    fread(&total, sizeof(double), 1, in);
+    fread(&total, sizeof(unsigned int), 1, in);
     fread(&type, sizeof(int), 1, in);
 
     Data = (NODE*)malloc(sizeof(NODE) * type);
